@@ -68,7 +68,7 @@
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='relcon|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -232,7 +232,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="classes.h" />
-    <ClInclude Include="detours.h" />
     <ClInclude Include="game.h" />
     <ClInclude Include="offsets.h" />
     <ClInclude Include="raid.h" />

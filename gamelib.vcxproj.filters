@@ -18,9 +18,6 @@
     <ClInclude Include="game.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="detours.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="raid.h">
       <Filter>Header Files</Filter>
     </ClInclude>

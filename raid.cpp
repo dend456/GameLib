@@ -151,23 +151,23 @@ Raid::Raid()
 
 void Raid::init() noexcept
 {
-	int base = (int)GetModuleHandle(NULL);
+	uint64_t base = (uint64_t)GetModuleHandle(NULL);
 	eqraiders = (EQRaider*)(base + Offsets::Raid::LIST_ADDR);
 
-	int winaddr = (base + Offsets::Raid::WINDOW_ADDR);
-	window = *((int*)(winaddr + Offsets::Raid::WINDOW_OFFSET));
+	uint64_t winaddr = (base + Offsets::Raid::WINDOW_ADDR);
+	window = *((uint64_t*)(winaddr + Offsets::Raid::WINDOW_OFFSET));
 
 	for (int i = 0; i < (int)RaidButton::length; ++i)
 	{
-		int buttonOffset = Offsets::Raid::WINDOW_GROUP_BUTTON_BASE_OFFSET + (4 * i);
-		int buttonAddr = *((int*)(winaddr));
-		buttonAddr = *((int*)(buttonAddr + buttonOffset));
+		uint64_t buttonOffset = Offsets::Raid::WINDOW_GROUP_BUTTON_BASE_OFFSET + (4 * i);
+		uint64_t buttonAddr = *((uint64_t*)(winaddr));
+		buttonAddr = *((uint64_t*)(buttonAddr + buttonOffset));
 		buttons[i] = buttonAddr;
 	}
 
-	selectedRaider = (int*)(base + Offsets::Raid::WINDOW_SELECTED_RAIDER_ADDR);
-	colorArray = (int**)(*(int*)(base + Offsets::Raid::WINDOW_COLOR_ADDR));
-	colorArray = (int**)((int)colorArray + Offsets::Raid::WINDOW_COLOR_BASE_OFFSET);
+	selectedRaider = (uint64_t*)(base + Offsets::Raid::WINDOW_SELECTED_RAIDER_ADDR);
+	colorArray = (uint64_t**)(*(uint64_t*)(base + Offsets::Raid::WINDOW_COLOR_ADDR));
+	colorArray = (uint64_t**)((uint64_t)colorArray + Offsets::Raid::WINDOW_COLOR_BASE_OFFSET);
 }
 
 const std::array<Raider, Raid::RAID_SIZE>& Raid::read() noexcept
@@ -200,7 +200,7 @@ const std::array<Raider, Raid::RAID_SIZE>& Raid::read() noexcept
 		totalLevel += raiders[i].level;
 	}
 	if (numRaiders)
-		avgLevel = ((float)totalLevel / numRaiders) + 0.5f;
+		avgLevel = (int)(((float)totalLevel / numRaiders) + 0.5f);
 	else
 		avgLevel = 0;
 	return raiders;
@@ -208,16 +208,16 @@ const std::array<Raider, Raid::RAID_SIZE>& Raid::read() noexcept
 
 void Raid::clickButton(RaidButton button) const noexcept
 {
-	Game::hookedRaidGroupFunc((void*)window, nullptr, (int*)buttons[(int)button], 36, 0);
-	Game::hookedRaidGroupFunc((void*)window, nullptr, (int*)buttons[(int)button], 35, 0);
-	Game::hookedRaidGroupFunc((void*)window, nullptr, (int*)buttons[(int)button], 47, 0);
-	Game::hookedRaidGroupFunc((void*)window, nullptr, (int*)buttons[(int)button], 2, 0);
-	Game::hookedRaidGroupFunc((void*)window, nullptr, (int*)buttons[(int)button], 1, 0);
+	Game::hookedRaidGroupFunc((void*)window, (uint64_t*)buttons[(int)button], 36, 0);
+	Game::hookedRaidGroupFunc((void*)window, (uint64_t*)buttons[(int)button] , 35, 0);
+	Game::hookedRaidGroupFunc((void*)window, (uint64_t*)buttons[(int)button], 47, 0);
+	Game::hookedRaidGroupFunc((void*)window, (uint64_t*)buttons[(int)button], 2, 0);
+	Game::hookedRaidGroupFunc((void*)window, (uint64_t*)buttons[(int)button], 1, 0);
 }
 
 bool Raid::raidWindowOpen() const noexcept
 {
-	int addr = *(int*)((int)(GetModuleHandle(nullptr)) + Offsets::Raid::WINDOW_ADDR);
+	uint64_t addr = *(uint64_t*)((uint64_t)(GetModuleHandle(nullptr)) + Offsets::Raid::WINDOW_ADDR);
 	return *(bool*)(addr + Offsets::Raid::WINDOW_OPEN_OFFSET);
 }
 
@@ -239,7 +239,7 @@ void Raid::moveToGroup(const char* name, int group) const noexcept
 
 const char* Raid::myName() const noexcept
 {
-	int addr = (int)GetModuleHandle(nullptr) + Offsets::Raid::MY_NAME_ADDR;
+	uint64_t addr = (uint64_t)GetModuleHandle(nullptr) + Offsets::Raid::MY_NAME_ADDR;
 	const char* name = (const char*)addr;
 	return name;
 }
@@ -351,7 +351,7 @@ int Raid::groupSize(int group) const noexcept
 
 int Raid::colorForClass(int cls) const noexcept
 {
-	int* addr = (int*)((int)colorArray[Classes::classColorIndex[cls]] + Offsets::Raid::WINDOW_COLOR_OFFSET);
+	int* addr = (int*)((uint64_t)colorArray[Classes::classColorIndex[cls]] + Offsets::Raid::WINDOW_COLOR_OFFSET);
 	int color = *addr;
 	int R = color & 0x000000ff;
 	int G = (color & 0x0000ff00) >> 8;
@@ -425,7 +425,7 @@ Group* Raid::getUnfilledGroup(std::array<Group, 12>& groups) const noexcept
 void Raid::makeGroups() noexcept
 {
 	read();
-	int numGroups = ceil(numRaiders / 6.0f);
+	int numGroups = (int)ceil(numRaiders / 6.0f);
 
 	std::array<Group, 12> groups = {};
 	for (int i = 0; i < 12; ++i)

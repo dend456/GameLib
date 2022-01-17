@@ -112,13 +112,13 @@ private:
 	static constexpr int RAIDER_SIZE = 0x9c;
 
 	EQRaider* eqraiders = nullptr;
-	int* selectedRaider = nullptr;
-	int** colorArray = nullptr;
+	uint64_t* selectedRaider = nullptr;
+	uint64_t** colorArray = nullptr;
 	std::array<Raider, RAID_SIZE> raiders;
 	int numRaiders = 0;
 	int avgLevel = 0;
-	int window = 0;
-	std::array<int, (size_t)RaidButton::length> buttons = {};
+	uint64_t window = 0;
+	std::array<uint64_t, (size_t)RaidButton::length> buttons = {};
 	int getRaiderIndex(const char* name) const noexcept;
 	const Raider* getUngroupedRaider() const noexcept;
 	Group* getUnfilledGroup(std::array<Group, 12>& groups) const noexcept;
@@ -128,7 +128,7 @@ public:
 
 	void init() noexcept;
 	const std::array<Raider, RAID_SIZE>& read() noexcept;
-	bool locked() const noexcept { return *(bool*)((int)GetModuleHandle(NULL) + Offsets::Raid::WINDOW_LOCKED_OFFSET); }
+	bool locked() const noexcept { return *(bool*)((uint64_t)GetModuleHandle(NULL) + Offsets::Raid::WINDOW_LOCKED_OFFSET); }
 	void clickButton(RaidButton button) const noexcept;
 	bool setSelectedRaider(const char* name) const noexcept;
 	void makeGroups() noexcept;

@@ -3,16 +3,17 @@
 #include <map>
 #include <vector>
 #include <functional>
+#include <detours/detours.h>
 
 #include "offsets.h"
 
-using CommandFuncT = void(__thiscall*)(int, int*, const char*);
-using CommandFuncCallbackT = std::string(*)(int, int*, const char*);
+using CommandFuncT = void(__fastcall*)(uint64_t, uint64_t*, const char*);
+using CommandFuncCallbackT = std::string(*)(uint64_t, uint64_t*, const char*);
 
-using ItemLinkFuncT = void(__thiscall*)(void*, char*, int, bool);
+using ItemLinkFuncT = void(__fastcall*)(void*, char*, uint64_t, bool);
 
-using RaidGroupFuncT = int(__thiscall*)(int, int*, int, int*);
-using RaidSelectFuncT = int(__thiscall*)(int, int);
+using RaidGroupFuncT = int(__fastcall*)(uint64_t, uint64_t*, uint64_t, int*);
+using RaidSelectFuncT = int(__fastcall*)(uint64_t, int);
 
 namespace Patterns
 {
@@ -39,20 +40,25 @@ private:
 	static inline RaidGroupFuncT fnRaidGroupFunc = nullptr;
 	static inline RaidSelectFuncT fnRaidSelectFunc = nullptr;
 
+	static inline CommandFuncT commandFunc = nullptr;
+	static inline ItemLinkFuncT itemLinkFunc = nullptr;
+	static inline RaidGroupFuncT raidGroupFunc = nullptr;
+
 public:
 	static inline FILE* logFile = nullptr;
-	static inline int eqInst = 0;
-	static inline int* charInfo = nullptr;
+	static inline uint64_t eqInst = 0;
+	static inline uint64_t* charInfo = nullptr;
 
-	static inline std::function<std::string(int eq, int* p, const char* s)> commandFuncCallback = nullptr;
+	static inline std::function<std::string(uint64_t eq, uint64_t* p, const char* s)> commandFuncCallback = nullptr;
 
 	static uint64_t findPattern(char* addr, uint64_t size, const char* pattern) noexcept;
 	static void hook(const std::vector<std::string>& funcs) noexcept;
 	static void unhook() noexcept;
 
-	static void __fastcall hookedCommandFunc(int eq, void* unk, int* p, const char* s);
-	static void __fastcall hookedItemLinkFunc(void* item, void* unk, char* buffer, int size, bool unk2);
-	static int __fastcall hookedRaidGroupFunc(void* window, void* unk, int* a, int b, int* c);
-	static int __fastcall hookedRaidSelectFunc(void* t, void* unk, int a);
+	static void __fastcall hookedCommandFunc(uint64_t eq, uint64_t* p, const char* s);
+	static void __fastcall hookedItemLinkFunc(void* item, char* buffer, int size, bool unk2);
+	static int __fastcall hookedRaidGroupFunc(void* window, uint64_t* a, int b, int* c);
+	static int __fastcall hookedRaidSelectFunc(void* t, int a);
+
 };
 
