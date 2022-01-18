@@ -17,7 +17,7 @@ using RaidSelectFuncT = int(__fastcall*)(uint64_t, int);
 
 namespace Patterns
 {
-	static inline int SEARCH_SIZE = 0x800000;
+	static inline uint64_t SEARCH_SIZE = 0x800000;
 
 #ifdef _WIN64
 	static inline const char* COMMAND_FUNC_PATTERN = "\x48\x85\xd2\x0f\x84....\x48\x89\x5c\x24\x08\x55\x56\x57\x41\x54\x41\x55\x41\x56\x41\x57\x48\x8d\xac\x24\xb0\xf6\xff\xff";

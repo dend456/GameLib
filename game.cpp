@@ -34,8 +34,8 @@ uint64_t Game::findPattern(char* addr, uint64_t size, const char* pattern) noexc
 
 void __fastcall Game::hookedCommandFunc(uint64_t eq, uint64_t* p, const char* s)
 {
-    fmt::print(logFile, "CommandFunc {:x} {:x} {}\n", (uint64_t)eq, (uint64_t)p, std::string(s));
-    fflush(logFile);
+    //fmt::print(logFile, "CommandFunc {:x} {:x} {}\n", (uint64_t)eq, (uint64_t)p, std::string(s));
+    //fflush(logFile);
     if (eq == 0 || p == nullptr)
     {
         uint64_t base = (uint64_t)GetModuleHandle(nullptr);
@@ -68,8 +68,8 @@ void __fastcall Game::hookedItemLinkFunc(void* item, char* buffer, int size, boo
 
 int __fastcall Game::hookedRaidGroupFunc(void* window, uint64_t* a, uint64_t b, int* c)
 {
-    fmt::print(logFile, "hookedRaid {:x} {:x}\n", (uint64_t)window, (uint64_t)a);
-    fflush(logFile);
+    //fmt::print(logFile, "hookedRaid {:x} {:x}\n", (uint64_t)window, (uint64_t)a);
+    //fflush(logFile);
     if (window == nullptr || a == nullptr)
     {
         return 0;

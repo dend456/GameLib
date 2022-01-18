@@ -159,15 +159,17 @@ void Raid::init() noexcept
 
 	for (int i = 0; i < (int)RaidButton::length; ++i)
 	{
-		uint64_t buttonOffset = Offsets::Raid::WINDOW_GROUP_BUTTON_BASE_OFFSET + (4 * i);
+		uint64_t buttonOffset = Offsets::Raid::WINDOW_GROUP_BUTTON_BASE_OFFSET + (sizeof(void*) * i);
 		uint64_t buttonAddr = *((uint64_t*)(winaddr));
 		buttonAddr = *((uint64_t*)(buttonAddr + buttonOffset));
 		buttons[i] = buttonAddr;
 	}
 
 	selectedRaider = (uint64_t*)(base + Offsets::Raid::WINDOW_SELECTED_RAIDER_ADDR);
-	colorArray = (uint64_t**)(*(uint64_t*)(base + Offsets::Raid::WINDOW_COLOR_ADDR));
-	colorArray = (uint64_t**)((uint64_t)colorArray + Offsets::Raid::WINDOW_COLOR_BASE_OFFSET);
+	
+	//colorArray = (uint64_t**)(*(uint64_t*)(base + Offsets::Raid::WINDOW_COLOR_ADDR));
+	//colorArray = (uint64_t**)((uint64_t)colorArray + Offsets::Raid::WINDOW_COLOR_BASE_OFFSET);
+	colorArray = (int*)(window + Offsets::Raid::WINDOW_COLOR_OFFSET);
 }
 
 const std::array<Raider, Raid::RAID_SIZE>& Raid::read() noexcept
@@ -351,8 +353,8 @@ int Raid::groupSize(int group) const noexcept
 
 int Raid::colorForClass(int cls) const noexcept
 {
-	int* addr = (int*)((uint64_t)colorArray[Classes::classColorIndex[cls]] + Offsets::Raid::WINDOW_COLOR_OFFSET);
-	int color = *addr;
+	//int* addr = (int*)((uint64_t)colorArray[Classes::classColorIndex[cls]] + Offsets::Raid::WINDOW_COLOR_OFFSET);
+	int color = colorArray[Classes::classColorIndex[cls]];
 	int R = color & 0x000000ff;
 	int G = (color & 0x0000ff00) >> 8;
 	int B = (color & 0x00ff0000) >> 16;
