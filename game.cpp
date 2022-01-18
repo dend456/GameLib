@@ -2,7 +2,8 @@
 #include <Windows.h>
 #include <map>
 #include <string>
-#include <detours/detours.h>
+#include <MinHook.h>
+#include "polyhook2/CapstoneDisassembler.hpp"
 #include "game.h"
 #include <fstream>
 
@@ -50,30 +51,30 @@ void __fastcall Game::hookedCommandFunc(uint64_t eq, uint64_t* p, const char* s)
         std::string r = commandFuncCallback(eq, p, s);
         if (r.length() > 0)
         {
-            commandFunc(eq, p, r.c_str());
+            fnCommandFunc(eq, p, r.c_str());
         }
     }
     else
     {
-        commandFunc(eq, p, s);
+        fnCommandFunc(eq, p, s);
     }
 }
 
 void __fastcall Game::hookedItemLinkFunc(void* item, char* buffer, int size, bool unk2)
 {
     if (item == nullptr || buffer == nullptr) return;
-    itemLinkFunc(item, buffer, size, unk2);
+    fnItemLinkFunc(item, buffer, size, unk2);
 }
 
-int __fastcall Game::hookedRaidGroupFunc(void* window, uint64_t* a, int b, int* c)
+int __fastcall Game::hookedRaidGroupFunc(void* window, uint64_t* a, uint64_t b, int* c)
 {
-    //fmt::print(logFile, "hookedRaid {:x} {:x}\n", (int)window, (int)a);
-    //fflush(logFile);
+    fmt::print(logFile, "hookedRaid {:x} {:x}\n", (uint64_t)window, (uint64_t)a);
+    fflush(logFile);
     if (window == nullptr || a == nullptr)
     {
         return 0;
     }
-    return raidGroupFunc((uint64_t)window, a, b, c);
+    return fnRaidGroupFunc((uint64_t)window, a, b, c);
 }
 
 int __fastcall Game::hookedRaidSelectFunc(void* t, int a)
@@ -86,9 +87,6 @@ void Game::hook(const std::vector<std::string>& funcs) noexcept
     try
     {
         uint64_t base = (uint64_t)GetModuleHandle(nullptr);
-        PVOID pRealTarget;
-        PVOID pRealDetour;
-        PDETOUR_TRAMPOLINE tramp;
         for (const auto& s : funcs)
         {
             if (s == "CommandFunc")
@@ -96,12 +94,8 @@ void Game::hook(const std::vector<std::string>& funcs) noexcept
                 uint64_t addr = findPattern((char*)base, Patterns::SEARCH_SIZE, Patterns::COMMAND_FUNC_PATTERN);
                 if (addr > 0)
                 {
-                    DetourTransactionBegin();
-                    DetourUpdateThread(GetCurrentThread());
-                    fnCommandFunc = (CommandFuncT)addr;
-                    DetourAttachEx(&(PVOID&)addr, hookedCommandFunc, &tramp, &pRealTarget, &pRealDetour);
-                    DetourTransactionCommit();
-                    commandFunc = (CommandFuncT)tramp;
+                    commandFuncAddr = addr;
+                    MH_CreateHook((LPVOID)addr, hookedCommandFunc, (LPVOID*)&fnCommandFunc);
                 }
                 else
                 {
@@ -114,12 +108,12 @@ void Game::hook(const std::vector<std::string>& funcs) noexcept
                 uint64_t addr = findPattern((char*)base, Patterns::SEARCH_SIZE, Patterns::ITEMLINK_FUNC_PATTERN);
                 if (addr > 0)
                 {
-                    DetourTransactionBegin();
+                  /*  DetourTransactionBegin();
                     DetourUpdateThread(GetCurrentThread());
                     fnItemLinkFunc = (ItemLinkFuncT)addr;
                     DetourAttachEx(&(PVOID&)addr, hookedItemLinkFunc, &tramp, &pRealTarget, &pRealDetour);
                     DetourTransactionCommit();
-                    itemLinkFunc = (ItemLinkFuncT)tramp;
+                    itemLinkFunc = (ItemLinkFuncT)tramp;*/
                 }
                 else
                 {
@@ -132,12 +126,7 @@ void Game::hook(const std::vector<std::string>& funcs) noexcept
                 uint64_t addr = findPattern((char*)base, Patterns::SEARCH_SIZE, Patterns::RAIDGROUP_FUNC_PATTERN);
                 if (addr > 0)
                 {
-                    DetourTransactionBegin();
-                    DetourUpdateThread(GetCurrentThread());
-                    fnRaidGroupFunc = (RaidGroupFuncT)addr;
-                    DetourAttachEx(&(PVOID&)addr, hookedRaidGroupFunc, &tramp, &pRealTarget, &pRealDetour);
-                    DetourTransactionCommit();
-                    raidGroupFunc = (RaidGroupFuncT)tramp;
+                    MH_CreateHook((LPVOID)addr, hookedRaidGroupFunc, (LPVOID*)&fnRaidGroupFunc);
                 }
                 else
                 {
@@ -157,6 +146,8 @@ void Game::hook(const std::vector<std::string>& funcs) noexcept
                 }*/
             }
         }
+
+        MH_EnableHook(MH_ALL_HOOKS);
     }
     catch (const std::exception&)
     {
@@ -165,18 +156,28 @@ void Game::hook(const std::vector<std::string>& funcs) noexcept
 
 void Game::unhook() noexcept
 {
-    DetourTransactionBegin();
-    DetourUpdateThread(GetCurrentThread());
+    /*DetourTransactionBegin();
+    DetourUpdateThread(GetCurrentThread());*/
     /*
     if (fnCommandFunc) DetourRemove((PBYTE)fnCommandFunc, (PBYTE)hookedCommandFunc);
     if (fnItemLinkFunc) DetourRemove((PBYTE)fnItemLinkFunc, (PBYTE)hookedItemLinkFunc);
     if (fnRaidGroupFunc) DetourRemove((PBYTE)fnRaidGroupFunc, (PBYTE)hookedRaidGroupFunc);
     if (fnRaidSelectFunc) DetourRemove((PBYTE)fnRaidSelectFunc, (PBYTE)hookedRaidSelectFunc);
     */
-    if (fnCommandFunc) DetourDetach(&(PVOID&)fnCommandFunc, hookedCommandFunc);
+    /*
+    if (fnCommandFunc)
+    {
+        auto r = DetourDetach(&(PVOID&)fnCommandFunc, hookedCommandFunc);
+        fprintf(Game::logFile, "detach %d\n", r);
+    }
     if (fnItemLinkFunc) DetourDetach(&(PVOID&)fnItemLinkFunc, hookedItemLinkFunc);
     if (fnRaidGroupFunc) DetourDetach(&(PVOID&)fnRaidGroupFunc, hookedRaidGroupFunc);
     if (fnRaidSelectFunc) DetourDetach(&(PVOID&)fnRaidSelectFunc, hookedRaidSelectFunc);
-    
-    DetourTransactionCommit();
+    auto r = DetourTransactionCommit();
+    fprintf(Game::logFile, "detachcommit %d\n", r);    */
+
+    //commandFuncDetour->unHook();
+    //MH_DisableHook(MH_ALL_HOOKS);
+    //fprintf(Game::logFile, "detach %d\n", r);
+    //fflush(Game::logFile);
 }
