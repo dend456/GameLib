@@ -3,19 +3,19 @@ namespace Offsets
 {
 	namespace Raid
 	{
-		static constexpr int WINDOW_ADDR = 0xadeef4;
+		static constexpr int WINDOW_ADDR = 0xae8fe0;
 		static constexpr int WINDOW_OFFSET = 0;
-		static constexpr int WINDOW_LOCKED_OFFSET = 0xb96ce0;
-		static constexpr int WINDOW_GROUP_BUTTON_BASE_OFFSET = 0x254;
-		static constexpr int WINDOW_SELECTED_RAIDER_ADDR = 0xb96814;
+		static constexpr int WINDOW_LOCKED_OFFSET = 0xba0dd0;
+		static constexpr int WINDOW_GROUP_BUTTON_BASE_OFFSET = 0x240;
+		static constexpr int WINDOW_SELECTED_RAIDER_ADDR = 0xba0904;
 
 		static constexpr int WINDOW_COLOR_ADDR = 0xadeee8;
-		static constexpr int WINDOW_COLOR_BASE_OFFSET = 0x25c;
-		static constexpr int WINDOW_COLOR_OFFSET = 0x50;
+		static constexpr int WINDOW_COLOR_BASE_OFFSET = 0x2d4;
+		static constexpr int WINDOW_COLOR_OFFSET = 0x2d4;
 		static constexpr int WINDOW_OPEN_OFFSET = 0x20c;
 
-		static constexpr int LIST_ADDR = 0xb937a0;
-		static constexpr int MY_NAME_ADDR = 0xb931a0;
+		static constexpr int LIST_ADDR = 0xb9d890;
+		static constexpr int MY_NAME_ADDR = 0xb9d290;
 		static constexpr int NAME_OFFSET = 0;
 		static constexpr int LEVEL_OFFSET = 0x80;
 		static constexpr int CLASS_OFFSET = 0x84;
@@ -30,7 +30,7 @@ namespace Offsets
 
 	namespace EQ
 	{
-		static inline constexpr int INST_ADDR = 0xb9fcec;
-		static inline constexpr int CHAR_ADDR = 0xb90d68;
+		static inline constexpr int INST_ADDR = 0xba9ddc;
+		static inline constexpr int CHAR_ADDR = 0xb9ae58;
 	}
 }

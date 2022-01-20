@@ -113,7 +113,7 @@ private:
 
 	EQRaider* eqraiders = nullptr;
 	int* selectedRaider = nullptr;
-	int** colorArray = nullptr;
+	int* colorArray = nullptr;
 	std::array<Raider, RAID_SIZE> raiders;
 	int numRaiders = 0;
 	int avgLevel = 0;

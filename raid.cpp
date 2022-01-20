@@ -5,6 +5,7 @@
 #include "classes.h"
 #include <vector>
 #include <algorithm>
+#include <fmt/core.h>
 
 bool Group::pickRaider(std::array<Raider, 72>& raiders) noexcept
 {
@@ -166,8 +167,10 @@ void Raid::init() noexcept
 	}
 
 	selectedRaider = (int*)(base + Offsets::Raid::WINDOW_SELECTED_RAIDER_ADDR);
-	colorArray = (int**)(*(int*)(base + Offsets::Raid::WINDOW_COLOR_ADDR));
-	colorArray = (int**)((int)colorArray + Offsets::Raid::WINDOW_COLOR_BASE_OFFSET);
+	//colorArray = (int**)(*(int*)(base + Offsets::Raid::WINDOW_COLOR_ADDR));
+	//colorArray = (int**)((int)colorArray + Offsets::Raid::WINDOW_COLOR_BASE_OFFSET);	
+	colorArray = (int*)(window + Offsets::Raid::WINDOW_COLOR_OFFSET);
+
 }
 
 const std::array<Raider, Raid::RAID_SIZE>& Raid::read() noexcept
@@ -351,8 +354,10 @@ int Raid::groupSize(int group) const noexcept
 
 int Raid::colorForClass(int cls) const noexcept
 {
-	int* addr = (int*)((int)colorArray[Classes::classColorIndex[cls]] + Offsets::Raid::WINDOW_COLOR_OFFSET);
-	int color = *addr;
+	//int* addr = (int*)((int)colorArray[Classes::classColorIndex[cls]] + Offsets::Raid::WINDOW_COLOR_OFFSET);
+	//int color = *addr; 
+	int color = colorArray[Classes::classColorIndex[cls]];
+	//fmt::print(Game::logFile, "{} {}\n", color, (uint64_t)colorArray);
 	int R = color & 0x000000ff;
 	int G = (color & 0x0000ff00) >> 8;
 	int B = (color & 0x00ff0000) >> 16;
