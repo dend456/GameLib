@@ -10,6 +10,7 @@ using CommandFuncT = void(__thiscall*)(int, int*, const char*);
 using CommandFuncCallbackT = std::string(*)(int, int*, const char*);
 
 using ItemLinkFuncT = void(__thiscall*)(void*, char*, int, bool);
+using BazaarFindFuncT = int(__thiscall*)(int, int);
 
 using RaidGroupFuncT = int(__thiscall*)(int, int*, int, int*);
 using RaidSelectFuncT = int(__thiscall*)(int, int);
@@ -28,6 +29,7 @@ namespace Patterns
 	static inline const char* ITEMLINK_FUNC_PATTERN = "\x55\x8b\xec\x6a\xff\x68....\x64\xa1....\x50\x83\xec\x48\xa1....\x33\xc5\x89\x45\xf0";
 	static inline const char* RAIDGROUP_FUNC_PATTERN = "\x55\x8b\xec\x64\xa1....\x6a\xff\x68....\x50\x64\x89\x25....\x83\xec\x0c\x53\x8b\xd9\x83\xbb.....\x75\x13";
 	static inline const char* RAID_SELECT_FUNC_PATTERN = "\x56\x57\x8b\x7c\x24\x0c\x8b\xf1\x85\xff\x75\x3d\x8b\x86\x9c\x31";
+	static inline const char* BAZAAR_FIND_FUNC_PATTERN = "\x8b\xc1\x8b\x4c\x24\x04\x85\xc9\x74\x36";
 #endif
 }
 
@@ -38,6 +40,7 @@ private:
 	static inline ItemLinkFuncT fnItemLinkFunc = nullptr;
 	static inline RaidGroupFuncT fnRaidGroupFunc = nullptr;
 	static inline RaidSelectFuncT fnRaidSelectFunc = nullptr;
+	static inline BazaarFindFuncT fnBazaarFindFunc = nullptr;
 
 public:
 	static inline FILE* logFile = nullptr;
@@ -54,5 +57,6 @@ public:
 	static void __fastcall hookedItemLinkFunc(void* item, void* unk, char* buffer, int size, bool unk2);
 	static int __fastcall hookedRaidGroupFunc(void* window, void* unk, int* a, int b, int* c);
 	static int __fastcall hookedRaidSelectFunc(void* t, void* unk, int a);
+	static int __fastcall hookedBazaarFindFunc(int t, void* unk, int a);
 };
 

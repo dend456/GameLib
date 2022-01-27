@@ -79,6 +79,21 @@ int __fastcall Game::hookedRaidSelectFunc(void* t, void* unk, int a)
     return fnRaidSelectFunc((uint64_t)t, a);
 }
 
+int __fastcall Game::hookedBazaarFindFunc(int t, void* unk, int a)
+{
+    static int savedt = 0;
+    static int saveda = 0;
+    if (t != 0 && a != 0)
+    {
+        savedt = t;
+        saveda = a;
+    }
+    if (savedt == 0 || saveda == 0) return 0;
+    //fmt::print(logFile, "{:x} {:x}\n", savedt, saveda);
+    //fflush(logFile);
+    return fnBazaarFindFunc(savedt, saveda);
+}
+
 void Game::hook(const std::vector<std::string>& funcs) noexcept
 {
     try
@@ -109,6 +124,17 @@ void Game::hook(const std::vector<std::string>& funcs) noexcept
                 else
                 {
                     fmt::print(logFile, "Unable to find ItemLinkFunc\n");
+                    fflush(logFile);
+                }
+            }
+            else if (s == "BazaarFindFunc")
+            {
+                uint64_t addr = findPattern((char*)base, Patterns::SEARCH_SIZE, Patterns::BAZAAR_FIND_FUNC_PATTERN);
+                if (addr > 0)
+                    fnBazaarFindFunc = (BazaarFindFuncT)DetourFunction((PBYTE)addr, (PBYTE)hookedBazaarFindFunc);
+                else
+                {
+                    fmt::print(logFile, "Unable to find BazaarFindFunc\n");
                     fflush(logFile);
                 }
             }
@@ -149,4 +175,5 @@ void Game::unhook() noexcept
     if (fnItemLinkFunc) DetourRemove((PBYTE)fnItemLinkFunc, (PBYTE)hookedItemLinkFunc);
     if (fnRaidGroupFunc) DetourRemove((PBYTE)fnRaidGroupFunc, (PBYTE)hookedRaidGroupFunc);
     if (fnRaidSelectFunc) DetourRemove((PBYTE)fnRaidSelectFunc, (PBYTE)hookedRaidSelectFunc);
+    if (fnBazaarFindFunc) DetourRemove((PBYTE)fnBazaarFindFunc, (PBYTE)hookedBazaarFindFunc);
 }

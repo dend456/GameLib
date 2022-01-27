@@ -190,6 +190,7 @@ const std::array<Raider, Raid::RAID_SIZE>& Raid::read() noexcept
 		raiders[i].level = eqraiders[i].level;
 		raiders[i].cls = eqraiders[i].cls;
 		raiders[i].group = eqraiders[i].group;
+		raiders[i].afk = eqraiders[i].afk;
 		raiders[i].dead = eqraiders[i].dead;
 		raiders[i].raidLead = eqraiders[i].raidLead;
 		raiders[i].groupLead = eqraiders[i].groupLead;
@@ -198,7 +199,7 @@ const std::array<Raider, Raid::RAID_SIZE>& Raid::read() noexcept
 		raiders[i].masterLooter = eqraiders[i].masterLooter;
 		raiders[i].exists = true;
 		raiders[i].changedGroup = false;
-		raiders[i].inZone = false;
+		raiders[i].inZone = eqraiders[i].inZone;
 
 		totalLevel += raiders[i].level;
 	}
@@ -207,6 +208,19 @@ const std::array<Raider, Raid::RAID_SIZE>& Raid::read() noexcept
 	else
 		avgLevel = 0;
 	return raiders;
+}
+
+void Raid::moveGroupToGroup(int group1, int group2) const noexcept
+{
+	for (int i=0; i < RAID_SIZE; ++i)
+	{
+		if (eqraiders[i].name[0] != 0 && eqraiders[i].group == group1)
+		{
+			*selectedRaider = i;
+			clickButton((RaidButton)((int)RaidButton::group1 + group2));
+			Sleep(25);
+		}
+	}
 }
 
 void Raid::clickButton(RaidButton button) const noexcept

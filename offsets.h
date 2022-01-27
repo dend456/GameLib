@@ -33,4 +33,12 @@ namespace Offsets
 		static inline constexpr int INST_ADDR = 0xba9ddc;
 		static inline constexpr int CHAR_ADDR = 0xb9ae58;
 	}
+
+	namespace Baz
+	{
+		static inline constexpr int SELECTED_TRADER_ADDR = 0xa7b10;
+		static inline constexpr int SELECTED_TRADER_OFFSET = 0x384;
+		static inline constexpr int SELECTED_SLOT_OFFSET = 0xdc;
+
+	}
 }
