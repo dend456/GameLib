@@ -20,11 +20,10 @@ struct EQRaider
 	char masterLooter = 0;
 	char unk1[0x3];
 	int group = -1;
-	char unk2[0x1];
+	char afk = 0;
 	char dead = 0;
-	char unk4[0x2];
 	char inZone = 0;
-	char unk3[0x3];
+	char unk4[0x5];
 };
 #pragma pack(pop)
 
@@ -37,6 +36,7 @@ struct Raider
 	bool raidLead = false;
 	bool groupLead = false;
 	int group = -1;
+	bool afk = false;
 	bool assist = false;
 	bool marker = false;
 	bool masterLooter = false;
@@ -112,7 +112,7 @@ private:
 	static constexpr int RAIDER_SIZE = 0x9c;
 
 	EQRaider* eqraiders = nullptr;
-	uint64_t* selectedRaider = nullptr;
+	int* selectedRaider = nullptr;
 	int* colorArray = nullptr;
 	std::array<Raider, RAID_SIZE> raiders;
 	int numRaiders = 0;
@@ -134,6 +134,7 @@ public:
 	void makeGroups() noexcept;
 	void killGroups() noexcept;
 	void mergeGroups(std::array<Group, 12>& groups, float minScore) const noexcept;
+	void moveGroupToGroup(int group1, int group2) const noexcept;
 	int colorForClass(int cls) const noexcept;
 	void removeFromGroup(const char* name) const noexcept;
 	void moveToGroup(const char* name, int group) const noexcept;

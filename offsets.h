@@ -3,12 +3,12 @@ namespace Offsets
 {
 	namespace Raid
 	{
-		static constexpr uint64_t WINDOW_ADDR = 0xd31b60;
+		static constexpr uint64_t WINDOW_ADDR = 0xd30b60;
 		static constexpr uint64_t WINDOW_OFFSET = 0;
 		static constexpr uint64_t WINDOW_COLOR_OFFSET = 0x438;
-		static constexpr uint64_t WINDOW_LOCKED_OFFSET = 0xde9dbc;
+		static constexpr uint64_t WINDOW_LOCKED_OFFSET = 0xde8dbc;
 		static constexpr uint64_t WINDOW_GROUP_BUTTON_BASE_OFFSET = 0x310;
-		static constexpr uint64_t WINDOW_SELECTED_RAIDER_ADDR = 0xde98f0;
+		static constexpr uint64_t WINDOW_SELECTED_RAIDER_ADDR = 0xde88f0;
 						 /*
 		static constexpr uint64_t WINDOW_COLOR_ADDR = 0xd31b40;
 		static constexpr uint64_t WINDOW_COLOR_OFFSET = 0x38;
@@ -16,8 +16,8 @@ namespace Offsets
 						 */
 		static constexpr uint64_t WINDOW_OPEN_OFFSET = 0x20c;
 
-		static constexpr uint64_t LIST_ADDR = 0xde687c;
-		static constexpr uint64_t MY_NAME_ADDR = 0xde6170;
+		static constexpr uint64_t LIST_ADDR = 0xde587c;
+		static constexpr uint64_t MY_NAME_ADDR = 0xde5170;
 		static constexpr uint64_t NAME_OFFSET = 0;
 		static constexpr uint64_t LEVEL_OFFSET = 0x80;
 		static constexpr uint64_t CLASS_OFFSET = 0x84;

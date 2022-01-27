@@ -5,6 +5,7 @@
 #include "classes.h"
 #include <vector>
 #include <algorithm>
+#include <fmt/core.h>
 
 bool Group::pickRaider(std::array<Raider, 72>& raiders) noexcept
 {
@@ -165,11 +166,11 @@ void Raid::init() noexcept
 		buttons[i] = buttonAddr;
 	}
 
-	selectedRaider = (uint64_t*)(base + Offsets::Raid::WINDOW_SELECTED_RAIDER_ADDR);
-	
-	//colorArray = (uint64_t**)(*(uint64_t*)(base + Offsets::Raid::WINDOW_COLOR_ADDR));
-	//colorArray = (uint64_t**)((uint64_t)colorArray + Offsets::Raid::WINDOW_COLOR_BASE_OFFSET);
+	selectedRaider = (int*)(base + Offsets::Raid::WINDOW_SELECTED_RAIDER_ADDR);
+	//colorArray = (int**)(*(int*)(base + Offsets::Raid::WINDOW_COLOR_ADDR));
+	//colorArray = (int**)((int)colorArray + Offsets::Raid::WINDOW_COLOR_BASE_OFFSET);	
 	colorArray = (int*)(window + Offsets::Raid::WINDOW_COLOR_OFFSET);
+
 }
 
 const std::array<Raider, Raid::RAID_SIZE>& Raid::read() noexcept
@@ -189,6 +190,7 @@ const std::array<Raider, Raid::RAID_SIZE>& Raid::read() noexcept
 		raiders[i].level = eqraiders[i].level;
 		raiders[i].cls = eqraiders[i].cls;
 		raiders[i].group = eqraiders[i].group;
+		raiders[i].afk = eqraiders[i].afk;
 		raiders[i].dead = eqraiders[i].dead;
 		raiders[i].raidLead = eqraiders[i].raidLead;
 		raiders[i].groupLead = eqraiders[i].groupLead;
@@ -197,7 +199,7 @@ const std::array<Raider, Raid::RAID_SIZE>& Raid::read() noexcept
 		raiders[i].masterLooter = eqraiders[i].masterLooter;
 		raiders[i].exists = true;
 		raiders[i].changedGroup = false;
-		raiders[i].inZone = false;
+		raiders[i].inZone = eqraiders[i].inZone;
 
 		totalLevel += raiders[i].level;
 	}
@@ -206,6 +208,19 @@ const std::array<Raider, Raid::RAID_SIZE>& Raid::read() noexcept
 	else
 		avgLevel = 0;
 	return raiders;
+}
+
+void Raid::moveGroupToGroup(int group1, int group2) const noexcept
+{
+	for (int i=0; i < RAID_SIZE; ++i)
+	{
+		if (eqraiders[i].name[0] != 0 && eqraiders[i].group == group1)
+		{
+			*selectedRaider = i;
+			clickButton((RaidButton)((int)RaidButton::group1 + group2));
+			Sleep(25);
+		}
+	}
 }
 
 void Raid::clickButton(RaidButton button) const noexcept
@@ -353,8 +368,10 @@ int Raid::groupSize(int group) const noexcept
 
 int Raid::colorForClass(int cls) const noexcept
 {
-	//int* addr = (int*)((uint64_t)colorArray[Classes::classColorIndex[cls]] + Offsets::Raid::WINDOW_COLOR_OFFSET);
+	//int* addr = (int*)((int)colorArray[Classes::classColorIndex[cls]] + Offsets::Raid::WINDOW_COLOR_OFFSET);
+	//int color = *addr; 
 	int color = colorArray[Classes::classColorIndex[cls]];
+	//fmt::print(Game::logFile, "{} {}\n", color, (uint64_t)colorArray);
 	int R = color & 0x000000ff;
 	int G = (color & 0x0000ff00) >> 8;
 	int B = (color & 0x00ff0000) >> 16;

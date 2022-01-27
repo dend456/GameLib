@@ -3,7 +3,6 @@
 #include <map>
 #include <string>
 #include <MinHook.h>
-#include "polyhook2/CapstoneDisassembler.hpp"
 #include "game.h"
 #include <fstream>
 
@@ -133,17 +132,6 @@ void Game::hook(const std::vector<std::string>& funcs) noexcept
                     fmt::print(logFile, "Unable to find RaidGroupFunc\n");
                     fflush(logFile);
                 }
-                /*addr = findPattern((char*)base + Patterns::RAID_SELECT_SEARCH_ADDR, Patterns::SEARCH_SIZE, Patterns::RAID_SELECT_FUNC_PATTERN, Patterns::RAID_SELECT_FUNC_MASK);
-                if (addr > 0)
-                {
-                    fnRaidSelectFunc = (RaidSelectFuncT)DetourFunction((PBYTE)addr, (PBYTE)hookedRaidSelectFunc);
-                }
-                else
-                {
-#ifdef PRINT_OUTPUT
-                    printf("Unable to find RaidSelectFunc base=0x%08x\n", base);
-#endif
-                }*/
             }
         }
 
@@ -156,28 +144,5 @@ void Game::hook(const std::vector<std::string>& funcs) noexcept
 
 void Game::unhook() noexcept
 {
-    /*DetourTransactionBegin();
-    DetourUpdateThread(GetCurrentThread());*/
-    /*
-    if (fnCommandFunc) DetourRemove((PBYTE)fnCommandFunc, (PBYTE)hookedCommandFunc);
-    if (fnItemLinkFunc) DetourRemove((PBYTE)fnItemLinkFunc, (PBYTE)hookedItemLinkFunc);
-    if (fnRaidGroupFunc) DetourRemove((PBYTE)fnRaidGroupFunc, (PBYTE)hookedRaidGroupFunc);
-    if (fnRaidSelectFunc) DetourRemove((PBYTE)fnRaidSelectFunc, (PBYTE)hookedRaidSelectFunc);
-    */
-    /*
-    if (fnCommandFunc)
-    {
-        auto r = DetourDetach(&(PVOID&)fnCommandFunc, hookedCommandFunc);
-        fprintf(Game::logFile, "detach %d\n", r);
-    }
-    if (fnItemLinkFunc) DetourDetach(&(PVOID&)fnItemLinkFunc, hookedItemLinkFunc);
-    if (fnRaidGroupFunc) DetourDetach(&(PVOID&)fnRaidGroupFunc, hookedRaidGroupFunc);
-    if (fnRaidSelectFunc) DetourDetach(&(PVOID&)fnRaidSelectFunc, hookedRaidSelectFunc);
-    auto r = DetourTransactionCommit();
-    fprintf(Game::logFile, "detachcommit %d\n", r);    */
-
-    //commandFuncDetour->unHook();
-    //MH_DisableHook(MH_ALL_HOOKS);
-    //fprintf(Game::logFile, "detach %d\n", r);
-    //fflush(Game::logFile);
+    MH_DisableHook(MH_ALL_HOOKS);
 }
