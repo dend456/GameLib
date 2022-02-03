@@ -5,6 +5,7 @@
 #include "detours.h"
 #include "game.h"
 #include <fstream>
+#include "guild.h"
 
 
 uint64_t Game::findPattern(char* addr, uint64_t size, const char* pattern) noexcept
@@ -79,6 +80,24 @@ int __fastcall Game::hookedRaidSelectFunc(void* t, void* unk, int a)
     return fnRaidSelectFunc((uint64_t)t, a);
 }
 
+int* __fastcall Game::hookedRaidInviteAllFunc(void* t, void* unk, char* p)
+{
+    static void* savedt = nullptr;
+    static char* savedp = nullptr;
+
+    if (t)
+    {
+        savedt = t;
+        savedp = p;
+    }
+    if (savedt == nullptr) return nullptr;
+
+    //fmt::print(logFile, "inviteall {:x} {:x}\n", (int)t, (int)p);
+    //fflush(logFile);
+
+    return fnRaidInviteAllFunc(savedt, savedp);
+}
+
 int __fastcall Game::hookedBazaarFindFunc(int t, void* unk, int a)
 {
     static int savedt = 0;
@@ -150,6 +169,18 @@ void Game::hook(const std::vector<std::string>& funcs) noexcept
                     fmt::print(logFile, "Unable to find RaidGroupFunc\n");
                     fflush(logFile);
                 }
+                /*
+                addr = findPattern((char*)base, Patterns::SEARCH_SIZE, Patterns::INVITE_ALL_TO_RAID_FUNC_PATTERN);
+                if (addr > 0)
+                {
+                    fnRaidInviteAllFunc = (RaidInviteAllFuncT)DetourFunction((PBYTE)addr, (PBYTE)hookedRaidInviteAllFunc);
+                }
+                else
+                {
+                    fmt::print(logFile, "Unable to find InviteAllToRaidFunc\n");
+                    fflush(logFile);
+                }
+                */
                 /*addr = findPattern((char*)base + Patterns::RAID_SELECT_SEARCH_ADDR, Patterns::SEARCH_SIZE, Patterns::RAID_SELECT_FUNC_PATTERN, Patterns::RAID_SELECT_FUNC_MASK);
                 if (addr > 0)
                 {
@@ -162,6 +193,7 @@ void Game::hook(const std::vector<std::string>& funcs) noexcept
 #endif
                 }*/
             }
+
         }
     }
     catch (const std::exception&)
@@ -176,4 +208,5 @@ void Game::unhook() noexcept
     if (fnRaidGroupFunc) DetourRemove((PBYTE)fnRaidGroupFunc, (PBYTE)hookedRaidGroupFunc);
     if (fnRaidSelectFunc) DetourRemove((PBYTE)fnRaidSelectFunc, (PBYTE)hookedRaidSelectFunc);
     if (fnBazaarFindFunc) DetourRemove((PBYTE)fnBazaarFindFunc, (PBYTE)hookedBazaarFindFunc);
+    if (fnRaidInviteAllFunc) DetourRemove((PBYTE)fnRaidInviteAllFunc, (PBYTE)hookedRaidInviteAllFunc);
 }

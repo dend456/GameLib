@@ -12,7 +12,7 @@ namespace Offsets
 		static constexpr int WINDOW_COLOR_ADDR = 0xadeee8;
 		static constexpr int WINDOW_COLOR_BASE_OFFSET = 0x2d4;
 		static constexpr int WINDOW_COLOR_OFFSET = 0x2d4;
-		static constexpr int WINDOW_OPEN_OFFSET = 0x20c;
+		static constexpr int WINDOW_OPEN_OFFSET = 0x5c;
 
 		static constexpr int LIST_ADDR = 0xb9d890;
 		static constexpr int MY_NAME_ADDR = 0xb9d290;
@@ -39,6 +39,10 @@ namespace Offsets
 		static inline constexpr int SELECTED_TRADER_ADDR = 0xa7b10;
 		static inline constexpr int SELECTED_TRADER_OFFSET = 0x384;
 		static inline constexpr int SELECTED_SLOT_OFFSET = 0xdc;
+	}
 
+	namespace Guild
+	{
+		static inline constexpr int GUILD_LIST_ADDR = 0xba13e4;
 	}
 }

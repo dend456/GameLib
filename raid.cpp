@@ -6,6 +6,7 @@
 #include <vector>
 #include <algorithm>
 #include <fmt/core.h>
+#include "guild.h"
 
 bool Group::pickRaider(std::array<Raider, 72>& raiders) noexcept
 {
@@ -527,5 +528,31 @@ void Raid::mergeGroups(std::array<Group, 12>& groups, float minScore) const noex
 
 		mergeScores.erase(std::remove_if(mergeScores.begin(), mergeScores.end(), 
 			[g1, g2](const auto& a) { return std::get<0>(a) == g1 || std::get<0>(a) == g2 || std::get<1>(a) == g1 || std::get<1>(a) == g2; }));
+	}
+}
+
+void Raid::inviteGuild(const std::bitset<17>& classes, int minLevel, bool alts) const noexcept
+{
+	uint64_t base = (uint64_t)GetModuleHandle(nullptr);
+	int addr = base + Offsets::Guild::GUILD_LIST_ADDR;
+	addr = *(int*)addr;
+
+	GuildMember* m = (GuildMember*)addr;
+	if (m->name[0])
+	{
+		std::string command;
+		do
+		{
+			if (m->online
+				&& classes.test(m->cls)
+				&& m->level >= minLevel
+				&& (alts || (m->flags & GuildFlags::alt) == GuildFlags::none))
+			{
+				command = fmt::format("/raidinvite {}", std::string(m->name));
+				Game::hookedCommandFunc(0, 0, 0, command.c_str());
+			}
+
+			m = m->next;
+		} while (m);
 	}
 }

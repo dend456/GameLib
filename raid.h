@@ -2,6 +2,7 @@
 #include <Windows.h>
 #include <string>
 #include <array>
+#include <bitset>
 #include "offsets.h"
 
 class Raid;
@@ -145,4 +146,5 @@ public:
 	bool amIRaidLead() const noexcept;
 	const char* myName() const noexcept;
 	bool raidWindowOpen() const noexcept;
+	void inviteGuild(const std::bitset<17>& classes, int minLevel, bool alts) const noexcept;
 };

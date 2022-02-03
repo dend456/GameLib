@@ -234,6 +234,7 @@
     <ClInclude Include="classes.h" />
     <ClInclude Include="detours.h" />
     <ClInclude Include="game.h" />
+    <ClInclude Include="guild.h" />
     <ClInclude Include="offsets.h" />
     <ClInclude Include="raid.h" />
   </ItemGroup>
