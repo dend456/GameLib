@@ -205,7 +205,7 @@ const std::array<Raider, Raid::RAID_SIZE>& Raid::read() noexcept
 		totalLevel += raiders[i].level;
 	}
 	if (numRaiders)
-		avgLevel = ((float)totalLevel / numRaiders) + 0.5f;
+		avgLevel = (int)(((float)totalLevel / numRaiders) + 0.5f);
 	else
 		avgLevel = 0;
 	return raiders;
@@ -445,7 +445,7 @@ Group* Raid::getUnfilledGroup(std::array<Group, 12>& groups) const noexcept
 void Raid::makeGroups() noexcept
 {
 	read();
-	int numGroups = ceil(numRaiders / 6.0f);
+	int numGroups = (int)ceil(numRaiders / 6.0f);
 
 	std::array<Group, 12> groups = {};
 	for (int i = 0; i < 12; ++i)
@@ -534,7 +534,7 @@ void Raid::mergeGroups(std::array<Group, 12>& groups, float minScore) const noex
 void Raid::inviteGuild(const std::bitset<17>& classes, int minLevel, bool alts) const noexcept
 {
 	uint64_t base = (uint64_t)GetModuleHandle(nullptr);
-	int addr = base + Offsets::Guild::GUILD_LIST_ADDR;
+	uint64_t addr = base + Offsets::Guild::GUILD_LIST_ADDR;
 	addr = *(int*)addr;
 
 	GuildMember* m = (GuildMember*)addr;
@@ -555,4 +555,42 @@ void Raid::inviteGuild(const std::bitset<17>& classes, int minLevel, bool alts) 
 			m = m->next;
 		} while (m);
 	}
+}
+
+void Raid::groupAlts() noexcept
+{
+	auto alts = Guild::getAlts();
+	killGroups();
+	Sleep(100);
+
+	read();
+
+	std::array<Group, 12> groups = {};
+	for (int i = 0; i < 12; ++i)
+	{
+		groups[i].groupNum = i;
+	}
+
+	for (Raider& r : raiders)
+	{
+		if (!r.exists) continue;
+		auto it = alts.find(r.name);
+		if(it != alts.end())
+		{
+			Group* group = getUnfilledGroup(groups);
+			if (!group) break;
+			moveToGroup(r.name, group->groupNum);
+			group->addRaider(&r);
+
+			for (const auto& alt : it->second)
+			{
+				moveToGroup(alt.c_str(), group->groupNum);
+			}
+		}
+	}
+}
+
+void Raid::kickp() noexcept
+{
+	Game::hookedCommandFunc(0, 0, 0, "/kickp raid");
 }

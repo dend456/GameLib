@@ -1,4 +1,7 @@
 #pragma once
+#include <vector>
+#include <map>
+#include <string>
 
 enum GuildFlags
 {
@@ -29,9 +32,16 @@ struct GuildMember
 	char unk8[0x4];
 	char publicNote[256];
 	char privateNote[256];
-	bool tribute;
-	bool trophy;
+	bool tributeOptIn;
+	bool trophyOptIn;
 };
 #pragma pack(pop)
 
 //int jnr = sizeof(GuildMember);
+
+class Guild
+{
+public:
+	static std::map<std::string, std::vector<std::string>> getAlts() noexcept;
+	static GuildMember* getHead() noexcept;
+};
