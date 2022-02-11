@@ -27,12 +27,18 @@
     <ClInclude Include="offsets.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="guild.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="game.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="raid.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="guild.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

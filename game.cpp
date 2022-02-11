@@ -5,6 +5,7 @@
 #include <MinHook.h>
 #include "game.h"
 #include <fstream>
+#include "guild.h"
 
 
 uint64_t Game::findPattern(char* addr, uint64_t size, const char* pattern) noexcept
@@ -33,8 +34,8 @@ uint64_t Game::findPattern(char* addr, uint64_t size, const char* pattern) noexc
 
 void __fastcall Game::hookedCommandFunc(uint64_t eq, uint64_t* p, const char* s)
 {
-    //fmt::print(logFile, "CommandFunc {:x} {:x} {}\n", (uint64_t)eq, (uint64_t)p, std::string(s));
-    //fflush(logFile);
+    fmt::print(logFile, "CommandFunc {:x} {:x} {}\n", (uint64_t)eq, (uint64_t)p, std::string(s));
+    fflush(logFile);
     if (eq == 0 || p == nullptr)
     {
         uint64_t base = (uint64_t)GetModuleHandle(nullptr);
@@ -95,6 +96,7 @@ void Game::hook(const std::vector<std::string>& funcs) noexcept
                 {
                     commandFuncAddr = addr;
                     MH_CreateHook((LPVOID)addr, hookedCommandFunc, (LPVOID*)&fnCommandFunc);
+                    fmt::print(logFile, "hooked CommandFunc\n");
                 }
                 else
                 {
@@ -102,24 +104,24 @@ void Game::hook(const std::vector<std::string>& funcs) noexcept
                     fflush(logFile);
                 }
             }
-            else if (s == "ItemLinkFunc")
+            /*else if (s == "ItemLinkFunc")
             {
                 uint64_t addr = findPattern((char*)base, Patterns::SEARCH_SIZE, Patterns::ITEMLINK_FUNC_PATTERN);
                 if (addr > 0)
                 {
-                  /*  DetourTransactionBegin();
+                    DetourTransactionBegin();
                     DetourUpdateThread(GetCurrentThread());
                     fnItemLinkFunc = (ItemLinkFuncT)addr;
                     DetourAttachEx(&(PVOID&)addr, hookedItemLinkFunc, &tramp, &pRealTarget, &pRealDetour);
                     DetourTransactionCommit();
-                    itemLinkFunc = (ItemLinkFuncT)tramp;*/
+                    itemLinkFunc = (ItemLinkFuncT)tramp;
                 }
                 else
                 {
                     fmt::print(logFile, "Unable to find ItemLinkFunc\n");
                     fflush(logFile);
                 }
-            }
+            }*/
             else if (s == "RaidGroupFunc")
             {
                 uint64_t addr = findPattern((char*)base, Patterns::SEARCH_SIZE, Patterns::RAIDGROUP_FUNC_PATTERN);
@@ -137,8 +139,9 @@ void Game::hook(const std::vector<std::string>& funcs) noexcept
 
         MH_EnableHook(MH_ALL_HOOKS);
     }
-    catch (const std::exception&)
+    catch (const std::exception& e)
     {
+        fmt::print(logFile, "{}\n", std::string(e.what()));
     }
 }
 

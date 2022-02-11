@@ -233,11 +233,13 @@
   <ItemGroup>
     <ClInclude Include="classes.h" />
     <ClInclude Include="game.h" />
+    <ClInclude Include="guild.h" />
     <ClInclude Include="offsets.h" />
     <ClInclude Include="raid.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="game.cpp" />
+    <ClCompile Include="guild.cpp" />
     <ClCompile Include="raid.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

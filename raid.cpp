@@ -6,6 +6,7 @@
 #include <vector>
 #include <algorithm>
 #include <fmt/core.h>
+#include "guild.h"
 
 bool Group::pickRaider(std::array<Raider, 72>& raiders) noexcept
 {
@@ -246,12 +247,14 @@ void Raid::removeFromGroup(const char* name) const noexcept
 	}
 }
 
-void Raid::moveToGroup(const char* name, int group) const noexcept
+bool Raid::moveToGroup(const char* name, int group) const noexcept
 {
 	if (setSelectedRaider(name))
 	{
 		clickButton((RaidButton)((int)RaidButton::group1 + group));
+		return true;
 	}
+	return false;
 }
 
 const char* Raid::myName() const noexcept
@@ -528,4 +531,80 @@ void Raid::mergeGroups(std::array<Group, 12>& groups, float minScore) const noex
 		mergeScores.erase(std::remove_if(mergeScores.begin(), mergeScores.end(), 
 			[g1, g2](const auto& a) { return std::get<0>(a) == g1 || std::get<0>(a) == g2 || std::get<1>(a) == g1 || std::get<1>(a) == g2; }));
 	}
+}
+
+void Raid::inviteGuild(const std::bitset<17>& classes, int minLevel, bool alts) const noexcept
+{
+	GuildMember* m = Guild::getHead();
+	if (m)
+	{
+		std::string command;
+		do
+		{
+			if (m->online
+				&& classes.test(m->cls)
+				&& m->level >= minLevel
+				&& (alts || (m->flags & GuildFlags::alt) == GuildFlags::none))
+			{
+				command = fmt::format("/raidinvite {}", std::string(m->name));
+				Game::hookedCommandFunc(0, 0, command.c_str());
+			}
+
+			m = m->next;
+		} while (m);
+	}
+}
+
+void Raid::groupAlts() noexcept
+{
+	auto alts = Guild::getAlts();
+	killGroups();
+	Sleep(500);
+
+	read();
+
+	std::array<Group, 12> groups = {};
+	for (int i = 0; i < 12; ++i)
+	{
+		groups[i].groupNum = i;
+	}
+
+	for (Raider& r : raiders)
+	{
+		if (!r.exists) continue;
+		auto it = alts.find(r.name);
+		if(it != alts.end())
+		{
+			Group* group = nullptr;
+			for (int i = 0; i < 12; ++i)
+			{
+				if (groups[i].empty())
+				{
+					group = &groups[i];
+					break;
+				}
+			}
+
+			if (!group) break;
+			bool movedMain = false;
+
+			for (const auto& alt : it->second)
+			{
+				if (moveToGroup(alt.c_str(), group->groupNum))
+				{
+					if (!movedMain)
+					{
+						moveToGroup(r.name, group->groupNum);
+						group->addRaider(&r);
+						movedMain = true;
+					}
+				}
+			}
+		}
+	}
+}
+
+void Raid::kickp() noexcept
+{
+	Game::hookedCommandFunc(0, 0, "/kickp raid");
 }
