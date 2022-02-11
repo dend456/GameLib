@@ -247,12 +247,14 @@ void Raid::removeFromGroup(const char* name) const noexcept
 	}
 }
 
-void Raid::moveToGroup(const char* name, int group) const noexcept
+bool Raid::moveToGroup(const char* name, int group) const noexcept
 {
 	if (setSelectedRaider(name))
 	{
 		clickButton((RaidButton)((int)RaidButton::group1 + group));
+		return true;
 	}
+	return false;
 }
 
 const char* Raid::myName() const noexcept
@@ -561,7 +563,7 @@ void Raid::groupAlts() noexcept
 {
 	auto alts = Guild::getAlts();
 	killGroups();
-	Sleep(100);
+	Sleep(500);
 
 	read();
 
@@ -577,14 +579,30 @@ void Raid::groupAlts() noexcept
 		auto it = alts.find(r.name);
 		if(it != alts.end())
 		{
-			Group* group = getUnfilledGroup(groups);
+			Group* group = nullptr;
+			for (int i = 0; i < 12; ++i)
+			{
+				if (groups[i].empty())
+				{
+					group = &groups[i];
+					break;
+				}
+			}
+
 			if (!group) break;
-			moveToGroup(r.name, group->groupNum);
-			group->addRaider(&r);
+			bool movedMain = false;
 
 			for (const auto& alt : it->second)
 			{
-				moveToGroup(alt.c_str(), group->groupNum);
+				if (moveToGroup(alt.c_str(), group->groupNum))
+				{
+					if (!movedMain)
+					{
+						moveToGroup(r.name, group->groupNum);
+						group->addRaider(&r);
+						movedMain = true;
+					}
+				}
 			}
 		}
 	}
