@@ -240,6 +240,7 @@
   <ItemGroup>
     <ClCompile Include="game.cpp" />
     <ClCompile Include="guild.cpp" />
+    <ClCompile Include="offsets.cpp" />
     <ClCompile Include="raid.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

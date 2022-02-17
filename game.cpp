@@ -34,8 +34,8 @@ uint64_t Game::findPattern(char* addr, uint64_t size, const char* pattern) noexc
 
 void __fastcall Game::hookedCommandFunc(uint64_t eq, uint64_t* p, const char* s)
 {
-    fmt::print(logFile, "CommandFunc {:x} {:x} {}\n", (uint64_t)eq, (uint64_t)p, std::string(s));
-    fflush(logFile);
+    //fmt::print(logFile, "CommandFunc {:x} {:x} {}\n", (uint64_t)eq, (uint64_t)p, std::string(s));
+    //fflush(logFile);
     if (eq == 0 || p == nullptr)
     {
         uint64_t base = (uint64_t)GetModuleHandle(nullptr);
@@ -96,7 +96,7 @@ void Game::hook(const std::vector<std::string>& funcs) noexcept
                 {
                     commandFuncAddr = addr;
                     MH_CreateHook((LPVOID)addr, hookedCommandFunc, (LPVOID*)&fnCommandFunc);
-                    fmt::print(logFile, "hooked CommandFunc\n");
+                    //fmt::print(logFile, "hooked CommandFunc\n");
                 }
                 else
                 {
@@ -127,6 +127,7 @@ void Game::hook(const std::vector<std::string>& funcs) noexcept
                 uint64_t addr = findPattern((char*)base, Patterns::SEARCH_SIZE, Patterns::RAIDGROUP_FUNC_PATTERN);
                 if (addr > 0)
                 {
+                    raidGroupFuncAddr = addr;
                     MH_CreateHook((LPVOID)addr, hookedRaidGroupFunc, (LPVOID*)&fnRaidGroupFunc);
                 }
                 else
@@ -148,4 +149,6 @@ void Game::hook(const std::vector<std::string>& funcs) noexcept
 void Game::unhook() noexcept
 {
     MH_DisableHook(MH_ALL_HOOKS);
+    //if (fnRaidGroupFunc) MH_RemoveHook((LPVOID)raidGroupFuncAddr);
+    //if (fnCommandFunc) MH_RemoveHook((LPVOID)commandFuncAddr);
 }

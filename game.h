@@ -39,6 +39,7 @@ private:
 
 	static inline ItemLinkFuncT fnItemLinkFunc = nullptr;
 	static inline RaidGroupFuncT fnRaidGroupFunc = nullptr;
+	static inline uint64_t raidGroupFuncAddr = 0;
 	static inline RaidSelectFuncT fnRaidSelectFunc = nullptr;
 
 	static inline CommandFuncT commandFunc = nullptr;
