@@ -82,6 +82,13 @@ int __fastcall Game::hookedRaidSelectFunc(void* t, int a)
     return fnRaidSelectFunc((uint64_t)t, a);
 }
 
+void __stdcall Game::hookedGroundSpawnClickFunc(void* a, int b, int c)
+{ 
+    fmt::print(logFile, "hookedGroundSpawnClickFunc {:x} {:x} {:x}\n", (uint64_t)a, b, c);
+    fflush(logFile);
+    //fnGroundSpawnClickFunc(a, b, c);
+}
+
 void Game::hook(const std::vector<std::string>& funcs) noexcept
 {
     try
@@ -135,6 +142,19 @@ void Game::hook(const std::vector<std::string>& funcs) noexcept
                     fmt::print(logFile, "Unable to find RaidGroupFunc\n");
                     fflush(logFile);
                 }
+            }
+            else if (s == "GroundSpawnClickFunc")
+            {
+               /* uint64_t addr = findPattern((char*)base, Patterns::SEARCH_SIZE, Patterns::GROUND_SPAWN_CLICK_FUNC_PATTERN);
+                if (addr > 0)
+                {
+                    MH_CreateHook((LPVOID)addr, hookedGroundSpawnClickFunc, (LPVOID*)&fnGroundSpawnClickFunc);
+                }
+                else
+                {
+                    fmt::print(logFile, "Unable to find GroundSpawnClickFunc\n");
+                    fflush(logFile);
+                }*/
             }
         }
 
