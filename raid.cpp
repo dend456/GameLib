@@ -633,7 +633,7 @@ int Raid::loadDump(const std::filesystem::path& file) noexcept
 			ss >> group;
 			ss >> name;
 			ss.ignore(INT32_MAX, '\n');
-			if (group > 0 && group <= 13)
+			if (group > 0 && group < 13)
 			{
 				moveToGroup(name.c_str(), group - 1);
 				Sleep(20);
