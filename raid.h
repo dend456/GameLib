@@ -134,6 +134,7 @@ public:
 	bool setSelectedRaider(const char* name) const noexcept;
 	void makeGroups() noexcept;
 	void killGroups() noexcept;
+	int loadDump(const std::filesystem::path& file) noexcept;
 	void mergeGroups(std::array<Group, 12>& groups, float minScore) const noexcept;
 	void moveGroupToGroup(int group1, int group2) const noexcept;
 	int colorForClass(int cls) const noexcept;

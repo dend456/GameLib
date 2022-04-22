@@ -6,6 +6,8 @@
 #include <vector>
 #include <algorithm>
 #include <fmt/core.h>
+#include <fstream>
+#include <sstream>
 #include "guild.h"
 
 bool Group::pickRaider(std::array<Raider, 72>& raiders) noexcept
@@ -607,4 +609,40 @@ void Raid::groupAlts() noexcept
 void Raid::kickp() noexcept
 {
 	Game::hookedCommandFunc(0, 0, "/kickp raid");
+}
+
+int Raid::loadDump(const std::filesystem::path& file) noexcept
+{
+	killGroups();
+	try
+	{
+		if (!std::filesystem::exists(file)) return -1;
+
+		std::ifstream inp{ file };
+		if (!inp.is_open() || !inp.good()) return -2;
+
+		std::string name;
+		int group = -1;
+
+		std::stringstream ss;
+		ss << inp.rdbuf();
+		inp.close();
+
+		while (!ss.eof() && ss.rdbuf()->in_avail() > 0)
+		{
+			ss >> group;
+			ss >> name;
+			ss.ignore(INT32_MAX, '\n');
+			if (group > 0 && group <= 13)
+			{
+				moveToGroup(name.c_str(), group - 1);
+				Sleep(20);
+			}
+		}
+	}
+	catch(const std::exception & e)
+	{
+		return -3;
+	}
+	return 0;
 }
