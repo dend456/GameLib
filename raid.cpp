@@ -640,7 +640,43 @@ int Raid::loadDump(const std::filesystem::path& file) noexcept
 			}
 		}
 	}
-	catch(const std::exception & e)
+	catch(const std::exception&)
+	{
+		return -3;
+	}
+	return 0;
+}
+
+int Raid::inviteDump(const std::filesystem::path& file) noexcept
+{
+	try
+	{
+		if (!std::filesystem::exists(file)) return -1;
+
+		std::ifstream inp{ file };
+		if (!inp.is_open() || !inp.good()) return -2;
+
+		std::string name;
+		int group = -1;
+
+		std::stringstream ss;
+		ss << inp.rdbuf();
+		inp.close();
+
+		std::string command;
+		while (!ss.eof() && ss.rdbuf()->in_avail() > 0)
+		{
+			ss >> group;
+			ss >> name;
+			ss.ignore(INT32_MAX, '\n');
+			if (group > 0 && group < 13)
+			{
+				command = fmt::format("/raidinvite {}", name);
+				Game::hookedCommandFunc(0, 0, command.c_str());
+			}
+		}
+	}
+	catch (const std::exception&)
 	{
 		return -3;
 	}
