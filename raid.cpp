@@ -682,3 +682,38 @@ int Raid::inviteDump(const std::filesystem::path& file) noexcept
 	}
 	return 0;
 }
+
+int Raid::inviteString(const std::string& str, bool raid) noexcept
+{
+	try
+	{
+		if (str.empty()) return -1;
+
+		std::string name;
+		std::stringstream ss;
+		ss << str;
+
+		std::string command;
+		while (!ss.eof() && ss.rdbuf()->in_avail() > 0)
+		{
+			ss >> name;
+			if (!name.empty())
+			{
+				if (raid)
+				{
+					command = fmt::format("/raidinvite {}", name);
+				}
+				else
+				{
+					command = fmt::format("/invite {}", name);
+				}
+				Game::hookedCommandFunc(0, 0, command.c_str());
+			}
+		}
+	}
+	catch (const std::exception&)
+	{
+		return -3;
+	}
+	return 0;
+}
