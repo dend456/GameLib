@@ -135,6 +135,8 @@ public:
 	void makeGroups() noexcept;
 	void killGroups() noexcept;
 	int loadDump(const std::filesystem::path& file) noexcept;
+	int groupFromString(const std::string& str) noexcept;
+	int groupFromDumpString(const std::string& str) noexcept;
 	int inviteString(const std::string& str, bool raid) noexcept;
 	int inviteDump(const std::filesystem::path& file) noexcept;
 	void mergeGroups(std::array<Group, 12>& groups, float minScore) const noexcept;

@@ -611,6 +611,98 @@ void Raid::kickp() noexcept
 	Game::hookedCommandFunc(0, 0, "/kickp raid");
 }
 
+int Raid::groupFromDumpString(const std::string& str) noexcept
+{
+	std::string name;
+	int group = -1;
+
+	std::stringstream ss;
+	ss << str;
+
+	while (!ss.eof() && ss.rdbuf()->in_avail() > 0)
+	{
+		ss >> group;
+		ss >> name;
+		ss.ignore(INT32_MAX, '\n');
+		if (group > 0 && group < 13)
+		{
+			moveToGroup(name.c_str(), group - 1);
+			Sleep(20);
+		}
+	}
+}
+
+int Raid::groupFromString(const std::string& str) noexcept
+{
+	killGroups();
+	try
+	{
+		if (str.empty()) return -1;
+		if (isdigit(str[0]))
+		{
+			return groupFromDumpString(str);
+		}
+
+		std::string name;
+		int group = -1;
+		std::vector<std::string> lines;
+		lines.reserve(12);
+
+		std::stringstream ss;
+		ss << str;
+
+		while (std::getline(ss, name, '\n'))
+		{
+			if (!name.empty() && name[name.size() - 1] == '\r')
+			{
+				name.pop_back();
+			}
+			lines.push_back(name);
+		}
+
+		if (lines.empty()) return -1;
+		else if (lines.size() == 1)
+		{
+			std::stringstream liness(lines[0]);
+			int count = 0;
+			while (!liness.eof() && liness.rdbuf()->in_avail() > 0)
+			{
+				liness >> name;
+				if (!name.empty())
+				{
+					name[0] = toupper(name[0]);
+					moveToGroup(name.c_str(), count / 6);
+					Sleep(20);
+				}
+				count++;
+			}
+		}
+		else
+		{
+			for (auto& line : lines)
+			{
+				std::stringstream liness(line);
+				int group = 0;
+				while (std::getline(liness, name, '\t'))
+				{
+					if (!name.empty() && group <= 11)
+					{
+						name[0] = toupper(name[0]);
+						moveToGroup(name.c_str(), group);
+						Sleep(20);
+					}
+					group++;
+				}
+			}
+		}
+	}
+	catch (const std::exception&)
+	{
+		return -3;
+	}
+	return 0;
+}
+
 int Raid::loadDump(const std::filesystem::path& file) noexcept
 {
 	killGroups();
@@ -627,18 +719,7 @@ int Raid::loadDump(const std::filesystem::path& file) noexcept
 		std::stringstream ss;
 		ss << inp.rdbuf();
 		inp.close();
-
-		while (!ss.eof() && ss.rdbuf()->in_avail() > 0)
-		{
-			ss >> group;
-			ss >> name;
-			ss.ignore(INT32_MAX, '\n');
-			if (group > 0 && group < 13)
-			{
-				moveToGroup(name.c_str(), group - 1);
-				Sleep(20);
-			}
-		}
+		groupFromDumpString(ss.str());
 	}
 	catch(const std::exception&)
 	{
