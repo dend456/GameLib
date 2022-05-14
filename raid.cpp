@@ -778,7 +778,7 @@ int Raid::inviteString(const std::string& str, bool raid) noexcept
 		while (!ss.eof() && ss.rdbuf()->in_avail() > 0)
 		{
 			ss >> name;
-			if (!name.empty())
+			if (name.size() > 3)
 			{
 				if (raid)
 				{
@@ -790,6 +790,7 @@ int Raid::inviteString(const std::string& str, bool raid) noexcept
 				}
 				Game::hookedCommandFunc(0, 0, command.c_str());
 			}
+			name.clear();
 		}
 	}
 	catch (const std::exception&)
