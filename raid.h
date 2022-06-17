@@ -152,6 +152,9 @@ public:
 	const char* myName() const noexcept;
 	bool raidWindowOpen() const noexcept;
 	void inviteGuild(const std::bitset<17>& classes, int minLevel, bool alts) const noexcept;
+	void inviteToExpedition(const char* name) const noexcept;
+	void kickExpedition() const noexcept;
+	void inviteRaidToExpedition() const noexcept;
 	void groupAlts() noexcept;
-	void kickp() noexcept;
+	void kickp() const noexcept;
 };

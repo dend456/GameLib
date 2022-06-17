@@ -557,6 +557,28 @@ void Raid::inviteGuild(const std::bitset<17>& classes, int minLevel, bool alts) 
 	}
 }
 
+void Raid::inviteToExpedition(const char* name) const noexcept
+{
+	if(name && strlen(name) > 3)
+	{
+		std::string str = std::string("/dzadd ") + std::string(name);
+		Game::hookedCommandFunc(0, 0, str.c_str());
+	}
+}
+
+void Raid::inviteRaidToExpedition() const noexcept
+{
+	for (int i = 0; i < RAID_SIZE; ++i)
+	{
+		if (eqraiders[i].name[0] == '\x00')
+		{
+			continue;
+		}
+		std::string str = std::string("/dzadd ") + std::string(eqraiders[i].name);
+		Game::hookedCommandFunc(0, 0, str.c_str());
+	}
+}
+
 void Raid::groupAlts() noexcept
 {
 	auto alts = Guild::getAlts();
@@ -606,7 +628,12 @@ void Raid::groupAlts() noexcept
 	}
 }
 
-void Raid::kickp() noexcept
+void Raid::kickExpedition() const noexcept
+{
+	Game::hookedCommandFunc(0, 0, "/kickp exp");
+}
+
+void Raid::kickp() const noexcept
 {
 	Game::hookedCommandFunc(0, 0, "/kickp raid");
 }
