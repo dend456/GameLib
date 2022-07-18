@@ -826,3 +826,26 @@ int Raid::inviteString(const std::string& str, bool raid) noexcept
 	}
 	return 0;
 }
+
+std::string Raid::dumpString() const noexcept
+{
+	static const std::string GROUP_LEAD_STR = "Group Leader";
+	static const std::string RAID_LEAD_STR = "Raid Leader";
+	std::string buff = ""; 
+	std::string nameBuff = "";
+	std::string leadBuff = "";
+
+	for (int i = 0; i < RAID_SIZE; ++i)
+	{
+		if (eqraiders[i].name[0] == '\x00')
+		{
+			continue;
+		}
+		nameBuff = eqraiders[i].name;
+		leadBuff = (eqraiders[i].raidLead) ? RAID_LEAD_STR : (eqraiders[i].groupLead) ? GROUP_LEAD_STR : "";
+		std::string str = fmt::format("{}\t{}\t{}\t{}\t{}\t\n", eqraiders[i].group+1, nameBuff, eqraiders[i].level, 
+			Classes::classStrings[eqraiders[i].cls], leadBuff);
+		buff += str;
+	}
+	return buff;
+}

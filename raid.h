@@ -157,4 +157,5 @@ public:
 	void inviteRaidToExpedition() const noexcept;
 	void groupAlts() noexcept;
 	void kickp() const noexcept;
+	std::string dumpString() const noexcept;
 };
