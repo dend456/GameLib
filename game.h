@@ -46,13 +46,10 @@ private:
 	static inline RaidGroupFuncT fnRaidGroupFunc = nullptr;
 	static inline uint64_t raidGroupFuncAddr = 0;
 	static inline RaidSelectFuncT fnRaidSelectFunc = nullptr;
-	//static inline GroundSpawnClickFuncT fnGroundSpawnClickFunc = nullptr;
 
 	static inline CommandFuncT commandFunc = nullptr;
 	static inline ItemLinkFuncT itemLinkFunc = nullptr;
 	static inline RaidGroupFuncT raidGroupFunc = nullptr;
-
-	//static inline GroundSpawnClickFuncT groundSpawnClickFunc = nullptr;
 public:
 	static inline FILE* logFile = nullptr;
 	static inline uint64_t eqInst = 0;
@@ -68,7 +65,6 @@ public:
 	static void __fastcall hookedItemLinkFunc(void* item, char* buffer, int size, bool unk2);
 	static int __fastcall hookedRaidGroupFunc(void* window, uint64_t* a, uint64_t b, int* c);
 	static int __fastcall hookedRaidSelectFunc(void* t, int a);
-	static void __stdcall hookedGroundSpawnClickFunc(void* a, int b, int c);
 	static void printGuild();
 };
 

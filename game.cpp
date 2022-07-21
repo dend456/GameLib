@@ -82,13 +82,6 @@ int __fastcall Game::hookedRaidSelectFunc(void* t, int a)
     return fnRaidSelectFunc((uint64_t)t, a);
 }
 
-void __stdcall Game::hookedGroundSpawnClickFunc(void* a, int b, int c)
-{ 
-    fmt::print(logFile, "hookedGroundSpawnClickFunc {:x} {:x} {:x}\n", (uint64_t)a, b, c);
-    fflush(logFile);
-    //fnGroundSpawnClickFunc(a, b, c);
-}
-
 void Game::hook(const std::vector<std::string>& funcs) noexcept
 {
     try
