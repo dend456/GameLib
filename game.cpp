@@ -92,6 +92,10 @@ void __fastcall Game::hookedOnMessageFunc(char* c1, char* str, uint64_t color, c
 void __fastcall Game::hookedOnLogMessageFunc(void* unk, char* str)
 {
     fnOnLogMessageFunc(unk, str);
+    if (onLogMessageCallback)
+    {
+        onLogMessageCallback(str);
+    }
 }
 void Game::hook(const std::vector<std::string>& funcs) noexcept
 {

@@ -70,6 +70,7 @@ public:
 	static inline uint64_t* charInfo = nullptr;
 
 	static inline std::function<std::string(uint64_t eq, uint64_t* p, const char* s)> commandFuncCallback = nullptr;
+	static inline std::function<void(const char*)> onLogMessageCallback = nullptr;
 
 	static uint64_t findPattern(char* addr, uint64_t size, const char* pattern) noexcept;
 	static void hook(const std::vector<std::string>& funcs) noexcept;
