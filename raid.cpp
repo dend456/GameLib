@@ -657,6 +657,7 @@ int Raid::groupFromDumpString(const std::string& str) noexcept
 			Sleep(20);
 		}
 	}
+	return 0;
 }
 
 int Raid::groupFromString(const std::string& str) noexcept
