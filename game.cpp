@@ -82,6 +82,17 @@ int __fastcall Game::hookedRaidSelectFunc(void* t, int a)
     return fnRaidSelectFunc((uint64_t)t, a);
 }
 
+void __fastcall Game::hookedOnMessageFunc(char* c1, char* str, uint64_t color, char c2, char c3, char c4)
+{
+    fnOnMessageFunc(c1, str, color, c2, c3, c4);
+    //fmt::print(logFile, "onMessage {:x} - {} - {} - {} - {} - {}\n", (uint64_t)c1, std::string(str), color, (int)c2, (int)c3, (int)c4);
+    //fflush(logFile);
+}
+
+void __fastcall Game::hookedOnLogMessageFunc(void* unk, char* str)
+{
+    fnOnLogMessageFunc(unk, str);
+}
 void Game::hook(const std::vector<std::string>& funcs) noexcept
 {
     try
@@ -148,6 +159,29 @@ void Game::hook(const std::vector<std::string>& funcs) noexcept
                     fmt::print(logFile, "Unable to find GroundSpawnClickFunc\n");
                     fflush(logFile);
                 }*/
+            }
+            else if (s == "OnMessageFunc")
+            {
+                /*uint64_t addr = findPattern((char*)base, Patterns::SEARCH_SIZE, Patterns::ON_MESSAGE_FUNC_PATTERN);
+                if (addr > 0)
+                {
+                    MH_CreateHook((LPVOID)addr, hookedOnMessageFunc, (LPVOID*)&fnOnMessageFunc);
+                }
+                else
+                {
+                    fmt::print(logFile, "Unable to find OnMessageFunc\n");
+                    fflush(logFile);
+                }*/
+                uint64_t addr = findPattern((char*)base, Patterns::SEARCH_SIZE, Patterns::ON_LOG_MESSAGE_FUNC_PATTERN);
+                if (addr > 0)
+                {
+                    MH_CreateHook((LPVOID)addr, hookedOnLogMessageFunc, (LPVOID*)&fnOnLogMessageFunc);
+                }
+                else
+                {
+                    fmt::print(logFile, "Unable to find OnMessage5Func\n");
+                    fflush(logFile);
+                }
             }
         }
 
