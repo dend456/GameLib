@@ -3,6 +3,7 @@
 #include <map>
 #include <vector>
 #include <functional>
+#include <spdlog/sinks/basic_file_sink.h>
 
 #include "offsets.h"
 
@@ -25,7 +26,7 @@ namespace Patterns
 
 #ifdef _WIN64
 	// #%s %s  static inline const char* COMMAND_FUNC_PATTERN = "\x48\x85\xd2\x0f\x84....\x48\x89\x5c\x24\x08\x55\x56\x57\x41\x54\x41\x55\x41\x56\x41\x57\x48\x8d\xac\x24\xb0\xf6\xff\xff";
-	static inline const char* COMMAND_FUNC_PATTERN = "\x48\x85\xd2\x0f\x84....\x48\x89\x5c\x24.\x55\x56\x57\x41\x54\x41\x55\x41\x56\x41\x57\x48\x8d....\xff\xff\x48\x81\xec....\x48\x8b\x05....\x48\x33\xc4\x48\x89\x85....\x49\x8b\xd8\x4c\x8b\xfa";
+	static inline const char* COMMAND_FUNC_PATTERN = "\x48\x85\xd2\x0f\x84....\x55\x53\x56\x57\x41\x54\x41\x56\x41\x57\x48\x8d\xac\x24....\x48\x81\xec....\x48\x8b\x05....\x48\x33\xc4";
 	static inline const char* ITEMLINK_FUNC_PATTERN = "\x55\x8b\xec\x6a\xff\x68....\x64\xa1....\x50\x83\xec\x48\xa1....\x33\xc5\x89\x45\xf0";
 	static inline const char* RAIDGROUP_FUNC_PATTERN = "\x48\x89\x5c\x24\x10\x48\x89\x74\x24\x18\x48\x89\x7c\x24\x20\x55\x41\x54\x41\x55\x41\x56\x41\x57\x48\x8b\xec\x48\x83\xec\x60\x4d\x8b\xf9\x45\x8b\xe0";
 	static inline const char* RAID_SELECT_FUNC_PATTERN = "\x56\x57\x8b\x7c\x24\x0c\x8b\xf1\x85\xff\x75\x3d\x8b\x86\x9c\x31";
@@ -67,7 +68,8 @@ private:
 public:
 	static inline FILE* logFile = nullptr;
 	static inline uint64_t eqInst = 0;
-	static inline uint64_t* charInfo = nullptr;
+	static inline uint64_t* charInfo = nullptr; 
+	static inline std::shared_ptr<spdlog::logger> logger = nullptr;
 
 	static inline std::function<std::string(uint64_t eq, uint64_t* p, const char* s)> commandFuncCallback = nullptr;
 	static inline std::function<void(const char*)> onLogMessageCallback = nullptr;

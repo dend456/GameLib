@@ -376,7 +376,6 @@ int Raid::colorForClass(int cls) const noexcept
 	//int* addr = (int*)((int)colorArray[Classes::classColorIndex[cls]] + Offsets::Raid::WINDOW_COLOR_OFFSET);
 	//int color = *addr; 
 	int color = colorArray[Classes::classColorIndex[cls]];
-	//fmt::print(Game::logFile, "{} {}\n", color, (uint64_t)colorArray);
 	int R = color & 0x000000ff;
 	int G = (color & 0x0000ff00) >> 8;
 	int B = (color & 0x00ff0000) >> 16;

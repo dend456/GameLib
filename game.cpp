@@ -34,8 +34,11 @@ uint64_t Game::findPattern(char* addr, uint64_t size, const char* pattern) noexc
 
 void __fastcall Game::hookedCommandFunc(uint64_t eq, uint64_t* p, const char* s)
 {
-    //fmt::print(logFile, "CommandFunc {:x} {:x} {}\n", (uint64_t)eq, (uint64_t)p, std::string(s));
-    //fflush(logFile);
+    if (Game::logger)
+    {
+        Game::logger->debug("CommandFunc InstAddr=0x{:x} CharAddr=0x{:x} Command={}", (uint64_t)eq, (uint64_t)p, s);
+    }
+
     if (eq == 0 || p == nullptr)
     {
         uint64_t base = (uint64_t)GetModuleHandle(nullptr);
@@ -68,8 +71,10 @@ void __fastcall Game::hookedItemLinkFunc(void* item, char* buffer, int size, boo
 
 int __fastcall Game::hookedRaidGroupFunc(void* window, uint64_t* a, uint64_t b, int* c)
 {
-    //fmt::print(logFile, "hookedRaid {:x} {:x}\n", (uint64_t)window, (uint64_t)a);
-    //fflush(logFile);
+    if (Game::logger)
+    {
+        Game::logger->debug("hookedRaid {:x} {:x}", (uint64_t)window, (uint64_t)a);
+    }
     if (window == nullptr || a == nullptr)
     {
         return 0;
@@ -111,12 +116,13 @@ void Game::hook(const std::vector<std::string>& funcs) noexcept
                 {
                     commandFuncAddr = addr;
                     MH_CreateHook((LPVOID)addr, hookedCommandFunc, (LPVOID*)&fnCommandFunc);
-                    //fmt::print(logFile, "hooked CommandFunc\n");
                 }
                 else
                 {
-                    fmt::print(logFile, "Unable to find CommandFunc\n");
-                    fflush(logFile);
+                    if (Game::logger)
+                    {
+                        Game::logger->error("Unable to find CommandFunc");
+                    }
                 }
             }
             /*else if (s == "ItemLinkFunc")
@@ -147,35 +153,14 @@ void Game::hook(const std::vector<std::string>& funcs) noexcept
                 }
                 else
                 {
-                    fmt::print(logFile, "Unable to find RaidGroupFunc\n");
-                    fflush(logFile);
+                    if (Game::logger)
+                    {
+                        Game::logger->error("Unable to find RaidGroupFunc");
+                    }
                 }
-            }
-            else if (s == "GroundSpawnClickFunc")
-            {
-               /* uint64_t addr = findPattern((char*)base, Patterns::SEARCH_SIZE, Patterns::GROUND_SPAWN_CLICK_FUNC_PATTERN);
-                if (addr > 0)
-                {
-                    MH_CreateHook((LPVOID)addr, hookedGroundSpawnClickFunc, (LPVOID*)&fnGroundSpawnClickFunc);
-                }
-                else
-                {
-                    fmt::print(logFile, "Unable to find GroundSpawnClickFunc\n");
-                    fflush(logFile);
-                }*/
             }
             else if (s == "OnMessageFunc")
             {
-                /*uint64_t addr = findPattern((char*)base, Patterns::SEARCH_SIZE, Patterns::ON_MESSAGE_FUNC_PATTERN);
-                if (addr > 0)
-                {
-                    MH_CreateHook((LPVOID)addr, hookedOnMessageFunc, (LPVOID*)&fnOnMessageFunc);
-                }
-                else
-                {
-                    fmt::print(logFile, "Unable to find OnMessageFunc\n");
-                    fflush(logFile);
-                }*/
                 uint64_t addr = findPattern((char*)base, Patterns::SEARCH_SIZE, Patterns::ON_LOG_MESSAGE_FUNC_PATTERN);
                 if (addr > 0)
                 {
@@ -183,8 +168,10 @@ void Game::hook(const std::vector<std::string>& funcs) noexcept
                 }
                 else
                 {
-                    fmt::print(logFile, "Unable to find OnMessage5Func\n");
-                    fflush(logFile);
+                    if (Game::logger)
+                    {
+                        Game::logger->error("Unable to find OnMessageFunc");
+                    }
                 }
             }
         }
@@ -193,13 +180,14 @@ void Game::hook(const std::vector<std::string>& funcs) noexcept
     }
     catch (const std::exception& e)
     {
-        fmt::print(logFile, "{}\n", std::string(e.what()));
+        if (Game::logger)
+        {
+            Game::logger->error("{}", std::string(e.what()));
+        }
     }
 }
 
 void Game::unhook() noexcept
 {
     MH_DisableHook(MH_ALL_HOOKS);
-    //if (fnRaidGroupFunc) MH_RemoveHook((LPVOID)raidGroupFuncAddr);
-    //if (fnCommandFunc) MH_RemoveHook((LPVOID)commandFuncAddr);
 }

@@ -49,8 +49,10 @@ namespace Offsets
 		}
 		catch (const std::exception& e)
 		{
-			fmt::print(Game::logFile, "Error loading ini: {}\n", std::string(e.what()));
-			fflush(Game::logFile);
+			if (Game::logger)
+			{
+				Game::logger->error("Error loading ini: {}", std::string(e.what()));
+			}
 			return false;
 		}
 		return true;
