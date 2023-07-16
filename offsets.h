@@ -31,6 +31,8 @@ namespace Offsets
 	{
 		inline uint64_t INST_ADDR = 0xdf1da0;
 		inline uint64_t CHAR_ADDR = 0xde6670;
+
+		inline uint64_t ZONE_OFFSET = 0;
 	}
 
 	namespace Baz

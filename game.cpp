@@ -191,3 +191,12 @@ void Game::unhook() noexcept
 {
     MH_DisableHook(MH_ALL_HOOKS);
 }
+
+std::string Game::getZone() noexcept
+{
+    uint64_t base = (uint64_t)GetModuleHandle(nullptr);
+    uint64_t addr = base + Offsets::EQ::ZONE_OFFSET;
+
+    const char* s = (const char*)addr;
+    return s;
+}

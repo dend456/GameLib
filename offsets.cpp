@@ -24,6 +24,8 @@ namespace Offsets
 			Offsets::EQ::INST_ADDR = std::stoi(std::string(str), 0, 0);
 			GetPrivateProfileStringA("EQ", "charAddr", TEXT(""), str, sizeof(str), pathStr);
 			Offsets::EQ::CHAR_ADDR = std::stoi(std::string(str), 0, 0);
+			GetPrivateProfileStringA("EQ", "zoneAddr", TEXT(""), str, sizeof(str), pathStr);
+			Offsets::EQ::ZONE_OFFSET = std::stoi(std::string(str), 0, 0);
 
 			GetPrivateProfileStringA("Raid", "windowAddr", TEXT(""), str, sizeof(str), pathStr);
 			Offsets::Raid::WINDOW_ADDR = std::stoi(std::string(str), 0, 0);
@@ -46,6 +48,7 @@ namespace Offsets
 
 			GetPrivateProfileStringA("Guild", "listAddr", TEXT(""), str, sizeof(str), pathStr);
 			Offsets::Guild::GUILD_LIST_ADDR = std::stoi(std::string(str), 0, 0);
+
 		}
 		catch (const std::exception& e)
 		{

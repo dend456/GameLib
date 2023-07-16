@@ -77,6 +77,7 @@ public:
 	static uint64_t findPattern(char* addr, uint64_t size, const char* pattern) noexcept;
 	static void hook(const std::vector<std::string>& funcs) noexcept;
 	static void unhook() noexcept;
+	static std::string getZone() noexcept;
 
 	static void __fastcall hookedCommandFunc(uint64_t eq, uint64_t* p, const char* s);
 	static void __fastcall hookedItemLinkFunc(void* item, char* buffer, int size, bool unk2);
